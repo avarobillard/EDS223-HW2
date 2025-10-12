@@ -1,0 +1,9 @@
+---
+title: "HW2: Exploring Patterns of Environmental Justice"
+author: Ava Robillard
+date: October 11, 2025
+format: html
+execute:
+  message: false
+  warning: false
+---
