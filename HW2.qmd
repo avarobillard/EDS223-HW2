@@ -51,15 +51,26 @@ if((st_crs(ejscreen) == st_crs(holc)) & (st_crs(holc) == st_crs(bird_obs))){
 
 ## Part 1: Legacy of redlining in current enviornmental (in)justice
 Explore historical redlining in Los Angeles and its legacy on present-day environmental justice
----
 
-# Visualize data
-2. Create a map of historical redlining neighborhoods
+### Visualize data
+2. Create a map of historical redlining neighborhoods colored by HOLC grade
 ```{r}
+# Use HOLC dataset to create map
 tm_shape(holc) +
   tm_fill(fill = "grade",
-          fill.scale = tm_scale(values = c("#76a865", "#7cb5bd", "#ffff00", "#d9838d")),
+          fill.scale = tm_scale(values = c("#76a865", "#7cb5bd", "#DAA520", "#d9838d")),
           fill.legend = tm_legend(title = "HOLC grade")) +
-  tm_basemap("Esri.WorldGrayCanvas")
+  tm_title(text = "HOLC Grades of Los Angeles Neighborhoods") +
+  tm_basemap("CartoDB.Positron") +
+  tm_layout(legend.text.size = 0.7,
+            frame.double_line = TRUE) +
+  tm_compass(type = "8star", size = 2) +
+  tm_scalebar() 
 ```
 
+Create a table with the percentages of census blocks falling within each HOLC grade 
+```{r}
+# Create table
+
+```
+ 
