@@ -6,7 +6,7 @@ Author: Ava Robillard
 
 This repository contains a Quarto document with an exploration of environmental justice patterns. The goal of this project is manipulate vector and raster data to build multi-layer maps in R with `tmap`.
 
-The project aims specifically to use EJScreen spatial data at the Census block group level, HOLC grade designations, and bird biodiversity observations to visualize relationships between historical redlining and the present-day environmental justice and biodiversity in Los Angeles, California.
+The project aims specifically to use EJScreen spatial data at the Census block group level, HOLC grade designations, and bird biodiversity observations to visualize relationships between historical redlining and the present-day environmental justice and biodiversity observations in Los Angeles, California.
 
 ## Repository Structure
 

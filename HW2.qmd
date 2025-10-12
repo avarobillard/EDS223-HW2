@@ -1,5 +1,5 @@
 ---
-title: "HW2: Exploring Patterns of Environmental Justice"
+title: "EDS 223 Homework 2"
 author: Ava Robillard
 date: October 11, 2025
 format: html
@@ -7,3 +7,59 @@ execute:
   message: false
   warning: false
 ---
+
+## Exploring patterns of environmental justice in Los Angeles, California
+
+During the 1930's, the Home Owner's Loan Corporation (HOLC) rated neighborhoods based upon their perceived safety ratings, eventually used blocking for access to loans for home ownership. Known as redlining, this practice has had persistent effects in the present-day, from the health of the surrounding environment to community involvement in citizen science. This makes mapping this data important for making informed decisions about conservation efforts and ensuring that all people have equitable access to a safe and biodiverse environment.
+
+**Objective**: Use EJScreen, HOLC designations, and bird observation data to visualize the effects of redlining on present-day Los Angeles, California as studied in [Ellis-Soto et al. 2023](https://ecoevorxiv.org/repository/view/3736/).
+
+### Load packages
+```{r}
+library(tidyverse)
+library(sf)
+library(tmap)
+```
+
+### Import data
+1. Import the EJScreen, HOLC designation, and bird observation data and ensure they have the same coordinate reference system
+```{r}
+# Read in data
+ejscreen <- read_sf(here::here("data", "ejscreen", "EJSCREEN_2023_BG_StatePct_with_AS_CNMI_GU_VI.gdb"))
+  
+holc <- read_sf(here::here("data", "mapping-inequality", "mapping-inequality-los-angeles.json"))
+
+bird_obs <- read_sf(here::here("data", "gbif-birds-LA", "gbif-birds-LA.shp"))
+```
+
+```{r}
+# Check the CRS of each dataset
+st_crs(ejscreen)
+st_crs(holc)
+st_crs(bird_obs)
+
+# Transform the CRS of the ejscreen dataset
+ejscreen <- st_transform(ejscreen, crs = st_crs(holc))
+
+# Ensure that the CRS matches between all three datasets
+if((st_crs(ejscreen) == st_crs(holc)) & (st_crs(holc) == st_crs(bird_obs))){
+  print("It's a match!")
+} else {
+  print("Not a match")
+}
+```
+
+## Part 1: Legacy of redlining in current enviornmental (in)justice
+Explore historical redlining in Los Angeles and its legacy on present-day environmental justice
+---
+
+# Visualize data
+2. Create a map of historical redlining neighborhoods
+```{r}
+tm_shape(holc) +
+  tm_fill(fill = "grade",
+          fill.scale = tm_scale(values = c("#76a865", "#7cb5bd", "#ffff00", "#d9838d")),
+          fill.legend = tm_legend(title = "HOLC grade")) +
+  tm_basemap("Esri.WorldGrayCanvas")
+```
+
