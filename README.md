@@ -1,6 +1,6 @@
 # EDS 223 Homework 2: Exploring Patterns of Environmental Justice
 
-![holc-la.jpg](https://s3.amazonaws.com/holc/tiles/CA/LosAngeles1/1939/holc-scan.jpg) Image credits: [Digital Scholarship Lab, University of Richmond, Mapping Inequality Project](https://dsl.richmond.edu/panorama/redlining/data/CA-LosAngeles)
+![LA HOLC](./holc-la.jpg) Image credits: [Digital Scholarship Lab, University of Richmond, Mapping Inequality Project](https://dsl.richmond.edu/panorama/redlining/data/CA-LosAngeles)
 
 Author: Ava Robillard
 
