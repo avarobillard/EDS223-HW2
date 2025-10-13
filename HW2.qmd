@@ -20,10 +20,11 @@ library(tidyverse)
 library(sf)
 library(tmap)
 library(kableExtra)
+library(patchwork)
 ```
 
 ### Import data
-1. Import the EJScreen, HOLC designation, and bird observation data, filter to Los Angeles, and ensure they have the same coordinate reference system
+Import the EJScreen, HOLC designation, and bird observation data, filter to Los Angeles, and ensure they have the same coordinate reference system
 ```{r}
 # Read in data
 ejscreen <- read_sf(here::here("data", "ejscreen", "EJSCREEN_2023_BG_StatePct_with_AS_CNMI_GU_VI.gdb")) 
@@ -65,7 +66,7 @@ if((st_crs(ejscreen_la) == st_crs(holc)) & (st_crs(holc) == st_crs(bird_obs))){
 Explore historical redlining in Los Angeles and its legacy on present-day environmental justice
 
 ### Visualize data
-2. Create a map of historical redlining neighborhoods colored by HOLC grade
+1. Create a map of historical redlining neighborhoods colored by HOLC grade
 ```{r}
 # Use HOLC dataset to create map
 tm_shape(ejscreen_la, bbox = holc) +
@@ -82,7 +83,7 @@ tm_shape(holc) +
   tm_scalebar() 
 ```
 
-Create a table with the percentages of census blocks falling within each HOLC grade 
+2. Create a table with the percentages of census blocks falling within each HOLC grade 
 ```{r}
 # Spatially join EJScreen and HOLC data
 census_grades <- st_join(ejscreen_la, holc) %>% 
@@ -96,4 +97,24 @@ census_grades %>%
   kable_styling()
 ```
  
+3. Create visualizations summarizing current conditions from the EJScreen data 
+within HOLC grades
+```{r}
+# Group by HOLC grade and calculate mean for each environmental variable 
+grade_means <- census_grades %>% 
+  group_by(grade) %>% 
+  summarize(lowinc_pct = mean(LOWINCPCT, na.rm = TRUE),
+            pm25_pctl = mean(P_D2_PM25, na.rm = TRUE),
+            lifeexp_pctl = mean(P_LIFEEXPPCT, na.rm = TRUE),
+            hazwaste_pctl = mean(P_PTSDF, na.rm = TRUE)) 
+
+grades_means_long <- grade_means %>% 
+  pivot_longer(lowinc_pct:hazwaste_pctl, names_to = "variable", values_to = "mean")
+
+ggplot(grades_means_long, aes(grade, mean, fill = grade)) +
+  geom_bar(stat = "identity") +
+  scale_fill_manual(values = c("A" = "#76a865", "B" = "#7cb5bd", "C" = "#DAA520", "D" = "#d9838d")) +
+  facet_wrap(vars(variable), scales = "free_y") +
+  theme_minimal()
+```
 
