@@ -19,13 +19,14 @@ During the 1930's, the Home Owner's Loan Corporation (HOLC) rated neighborhoods 
 library(tidyverse)
 library(sf)
 library(tmap)
+library(kableExtra)
 ```
 
 ### Import data
-1. Import the EJScreen, HOLC designation, and bird observation data and ensure they have the same coordinate reference system
+1. Import the EJScreen, HOLC designation, and bird observation data, filter to Los Angeles, and ensure they have the same coordinate reference system
 ```{r}
 # Read in data
-ejscreen <- read_sf(here::here("data", "ejscreen", "EJSCREEN_2023_BG_StatePct_with_AS_CNMI_GU_VI.gdb"))
+ejscreen <- read_sf(here::here("data", "ejscreen", "EJSCREEN_2023_BG_StatePct_with_AS_CNMI_GU_VI.gdb")) 
   
 holc <- read_sf(here::here("data", "mapping-inequality", "mapping-inequality-los-angeles.json"))
 
@@ -33,16 +34,27 @@ bird_obs <- read_sf(here::here("data", "gbif-birds-LA", "gbif-birds-LA.shp"))
 ```
 
 ```{r}
+# Filter EJScreen data to California
+ejscreen_ca <- ejscreen %>%
+  dplyr::filter(ST_ABBREV == "CA") 
+
+# Filter to Los Angeles County only
+ejscreen_la <- ejscreen_ca %>%
+  filter(CNTY_NAME %in% c("Los Angeles County")) 
+```
+
+```{r}
 # Check the CRS of each dataset
-st_crs(ejscreen)
+st_crs(ejscreen_la)
 st_crs(holc)
 st_crs(bird_obs)
 
-# Transform the CRS of the ejscreen dataset
-ejscreen <- st_transform(ejscreen, crs = st_crs(holc))
+# Transform the CRS of the  dataset
+holc <- st_transform(holc, crs = st_crs(ejscreen_la))
+bird_obs <- st_transform(bird_obs, crs = st_crs(ejscreen_la))
 
 # Ensure that the CRS matches between all three datasets
-if((st_crs(ejscreen) == st_crs(holc)) & (st_crs(holc) == st_crs(bird_obs))){
+if((st_crs(ejscreen_la) == st_crs(holc)) & (st_crs(holc) == st_crs(bird_obs))){
   print("It's a match!")
 } else {
   print("Not a match")
@@ -56,6 +68,8 @@ Explore historical redlining in Los Angeles and its legacy on present-day enviro
 2. Create a map of historical redlining neighborhoods colored by HOLC grade
 ```{r}
 # Use HOLC dataset to create map
+tm_shape(ejscreen_la, bbox = holc) +
+  tm_polygons() +
 tm_shape(holc) +
   tm_fill(fill = "grade",
           fill.scale = tm_scale(values = c("#76a865", "#7cb5bd", "#DAA520", "#d9838d")),
@@ -70,7 +84,16 @@ tm_shape(holc) +
 
 Create a table with the percentages of census blocks falling within each HOLC grade 
 ```{r}
-# Create table
+# Spatially join EJScreen and HOLC data
+census_grades <- st_join(ejscreen_la, holc) %>% 
+  st_drop_geometry()
 
+# Create table of HOLC grade percentages
+census_grades %>% 
+  group_by(grade) %>% 
+  summarize(percentage = (n())/100) %>% 
+  kbl(caption = "Percentage of Census Block Groups in each HOLC Grade") %>% 
+  kable_styling()
 ```
  
+
