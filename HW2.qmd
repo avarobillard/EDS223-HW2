@@ -1,7 +1,7 @@
 ---
 title: "EDS 223 Homework 2"
 author: Ava Robillard
-date: October 11, 2025
+date: October 17, 2025
 format: html
 execute:
   message: false
@@ -34,6 +34,7 @@ holc <- read_sf(here::here("data", "mapping-inequality", "mapping-inequality-los
 bird_obs <- read_sf(here::here("data", "gbif-birds-LA", "gbif-birds-LA.shp"))
 ```
 
+Filter the EJScreen data to only Los Angeles County, California
 ```{r}
 # Filter EJScreen data to California
 ejscreen_ca <- ejscreen %>%
@@ -44,17 +45,13 @@ ejscreen_la <- ejscreen_ca %>%
   filter(CNTY_NAME %in% c("Los Angeles County")) 
 ```
 
+The CRS of each data set was checked using st_crs(), and it was determined that only the EJScreen data was using the EPSG 3857 projected coordinate system while the HOLC and bird observation data were using the EPSG 4326 geographic coordinate system.
 ```{r}
-# Check the CRS of each dataset
-st_crs(ejscreen_la)
-st_crs(holc)
-st_crs(bird_obs)
-
-# Transform the CRS of the  dataset
+# Transform the CRS of the data set
 holc <- st_transform(holc, crs = st_crs(ejscreen_la))
 bird_obs <- st_transform(bird_obs, crs = st_crs(ejscreen_la))
 
-# Ensure that the CRS matches between all three datasets
+# Ensure that the CRS matches between all three data sets
 if((st_crs(ejscreen_la) == st_crs(holc)) & (st_crs(holc) == st_crs(bird_obs))){
   print("It's a match!")
 } else {
@@ -69,12 +66,11 @@ Explore historical redlining in Los Angeles and its legacy on present-day enviro
 1. Create a map of historical redlining neighborhoods colored by HOLC grade
 ```{r}
 # Use HOLC dataset to create map
-tm_shape(ejscreen_la, bbox = holc) +
-  tm_polygons() +
 tm_shape(holc) +
   tm_fill(fill = "grade",
           fill.scale = tm_scale(values = c("#76a865", "#7cb5bd", "#DAA520", "#d9838d")),
           fill.legend = tm_legend(title = "HOLC grade")) +
+  tm_borders(lwd = 0.7) +
   tm_title(text = "HOLC Grades of Los Angeles Neighborhoods") +
   tm_basemap("CartoDB.Positron") +
   tm_layout(legend.text.size = 0.7,
@@ -83,7 +79,7 @@ tm_shape(holc) +
   tm_scalebar() 
 ```
 
-2. Create a table with the percentages of census blocks falling within each HOLC grade 
+2. Spatially join EJScreen and HOLC data in order to create a table with the percentages of census blocks falling within each HOLC grade 
 ```{r}
 # Spatially join EJScreen and HOLC data
 census_grades <- st_join(ejscreen_la, holc) %>% 
@@ -97,6 +93,7 @@ census_grades %>%
   kable_styling()
 ```
  
+
 3. Create visualizations summarizing current conditions from the EJScreen data 
 within HOLC grades
 ```{r}
@@ -108,13 +105,61 @@ grade_means <- census_grades %>%
             lifeexp_pctl = mean(P_LIFEEXPPCT, na.rm = TRUE),
             hazwaste_pctl = mean(P_PTSDF, na.rm = TRUE)) 
 
+# Pivot longer to create structure for plotting
 grades_means_long <- grade_means %>% 
-  pivot_longer(lowinc_pct:hazwaste_pctl, names_to = "variable", values_to = "mean")
+  pivot_longer(lowinc_pct:hazwaste_pctl,
+               names_to = "variable",
+               values_to = "mean")
 
-ggplot(grades_means_long, aes(grade, mean, fill = grade)) +
+# Plot variables and facet wrap
+env_plot <- ggplot(grades_means_long, aes(grade, mean, fill = grade)) +
   geom_bar(stat = "identity") +
-  scale_fill_manual(values = c("A" = "#76a865", "B" = "#7cb5bd", "C" = "#DAA520", "D" = "#d9838d")) +
-  facet_wrap(vars(variable), scales = "free_y") +
+  labs(title = "Mean of Enviornmental Variables across HOLC Grades") +
+  scale_fill_manual(values = 
+  c("A" = "#76a865", "B" = "#7cb5bd", "C" = "#DAA520", "D" = "#d9838d")) +
+  facet_wrap(vars(variable),
+             scales = "free_y",
+             labeller = labeller(variable = 
+                                    c(lowinc_pct = "Low Income (%)",
+                                      pm25_pctl = "PM 2.5 Percentile",
+                                      lifeexp_pctl = "Life Expectancy Percentile",
+                                      hazwaste_pctl = "Hazardous Waste Proximity Percentile"))) +
   theme_minimal()
+
+env_plot
 ```
 
+### Interpretation of results
+** paragraph summarizing results **
+
+## Part 2: Legacy of redlining in biodiversity observations
+Explore historical redlining in Los Angeles in the collection of bird observations
+
+### Visualize data
+
+1. Spatially join bird observation data to HOLC grade data to assign each bird observation to a corresponding HOLC grade
+```{r}
+# Spatially join bird observation and HOLC data
+bird_grades <- st_join(holc, bird_obs) 
+```
+
+2. Create a visualization of the percentage of bird observations within each HOLC grade
+```{r}
+# Group by HOLC grade and calculate the percentage of total bird observations 
+bird_percents <- bird_grades %>% 
+  group_by(grade) %>% 
+  summarize(pct_total = n()/nrow(bird_grades)*100)
+
+# Create graph of percentages
+bird_plot <- ggplot(bird_percents, aes(x = grade, y = pct_total, fill = grade)) +
+  geom_bar(stat = "identity") +
+  labs(y = "percent of total",
+       title = "Percentage of Bird Observations in each HOLC Grade") +
+  scale_fill_manual(values = c("A" = "#76a865", "B" = "#7cb5bd", "C" = "#DAA520", "D" = "#d9838d")) +
+  theme_minimal()
+
+bird_plot
+```
+
+### Interpretation of results
+** paragraph about differences in study design and results **
