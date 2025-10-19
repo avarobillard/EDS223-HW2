@@ -2,7 +2,7 @@
 title: "EDS 223 Homework 2"
 author: Ava Robillard
 date: October 18, 2025
-format: html
+format: pdf
 execute:
   message: false
   warning: false
@@ -86,11 +86,13 @@ census_grades <- st_join(ejscreen_la, holc) %>%
   st_drop_geometry()
 
 # Create table of HOLC grade percentages
-census_grades %>% 
+grade_table <- census_grades %>% 
   group_by(grade) %>% 
   summarize(percentage = (n())/100) %>% 
   kbl(caption = "Percentage of Census Block Groups in each HOLC Grade") %>% 
   kable_styling()
+
+grade_table
 ```
  
 
@@ -123,7 +125,7 @@ env_plot <- ggplot(grades_means_long, aes(grade, mean, fill = grade)) +
                                     c(lowinc_pct = "Low Income (%)",
                                       pm25_pctl = "PM 2.5 Percentile",
                                       lifeexp_pctl = "Life Expectancy Percentile",
-                                      hazwaste_pctl = "Hazardous Waste Proximity Percentile"))) +
+                                      hazwaste_pctl = "Hazardous Waste Prox. Percentile"))) +
   theme_minimal()
 
 env_plot
@@ -175,7 +177,7 @@ There is the largest proportion of bird observations in neighborhoods that were 
 These results did not match the findings from [Ellis-Soto et al. 2023](https://ecoevorxiv.org/repository/view/3736/), which is likely due to differences in sampling and study design. They covered 38 states and 195 metropolitan areas, creating a larger sample that is likely better at estimating the true differences between grades. They also took into account differences in vegetation, open space, and population density and included them as predictors in their model, which would reduce the confounding effects of these variables on the results. For instance, areas that were grade C could have the highest population density in Los Angeles, which would skew the results even if there was not a high sampling density in these areas.
 
 ## Data Citations 
----
+
 [EJScreen](https://pedp-ejscreen.azurewebsites.net/). Accessed Oct 11, 2025
 
 [Digital Scholarship Lab, Mapping Inequality project: HOLC redlining data](https://dsl.richmond.edu/panorama/redlining/data). Accessed Oct 11, 2025
