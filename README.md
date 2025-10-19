@@ -1,10 +1,10 @@
-# EDS 223 Homework 2: Exploring Patterns of Environmental Justice
+# Los Angeles Historical Redlining Analysis
 
 ![LA HOLC](./holc-la.jpg) Image credits: [Digital Scholarship Lab, University of Richmond, Mapping Inequality Project](https://dsl.richmond.edu/panorama/redlining/data/CA-LosAngeles)
 
 Author: Ava Robillard
 
-This repository contains a Quarto document with an exploration of environmental justice patterns. The goal of this project is manipulate vector and raster data to build multi-layer maps in R with `tmap`.
+This repository contains a Quarto document with an exploration of environmental justice patterns.
 
 The project aims specifically to use EJScreen spatial data at the Census block group level, HOLC grade designations, and bird biodiversity observations to visualize relationships between historical redlining and the present-day environmental justice and biodiversity observations in Los Angeles, California.
 
@@ -39,10 +39,16 @@ The [Global Biodiversity Information Facility](https://www.gbif.org/) is the lar
 
 This assignment was created as a part of EDS 223: Geospatial Analysis & Remote Sensing, taught by Annie Adams.
 
-[EJScreen](https://pedp-ejscreen.azurewebsites.net/) [Data File]. Accessed Oct 11, 2025
+**Data**
 
-[Digital Scholarship Lab, Mapping Inequality project: HOLC redlining data](https://dsl.richmond.edu/panorama/redlining/data) [Data File]. Accessed Oct 11, 2025
+[EJScreen](https://pedp-ejscreen.azurewebsites.net/). Accessed Oct 11, 2025
 
-[Global Biodiversity Information Facility: bird observation data](https://www.gbif.org/) [Data File]. Accessed Oct 11, 2025
+[Digital Scholarship Lab, Mapping Inequality project: HOLC redlining data](https://dsl.richmond.edu/panorama/redlining/data). Accessed Oct 11, 2025
 
--   replace links with ones to data, is data file okay?
+[Global Biodiversity Information Facility: bird observation data](https://www.gbif.org/). Accessed Oct 11, 2025
+
+**Papers and other resources**
+
+U.S. Environmental Protection Agency (EPA), 2023. EJScreen Technical Documentation.
+
+Ellis-Soto, D., Chapman, M., & Locke, D. H. (2023). Historical redlining is associated with increasing geographical disparities in bird biodiversity sampling in the United States. Nature Human Behaviour, 1-9. Accessed Oct 18, 2025

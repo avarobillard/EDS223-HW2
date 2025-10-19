@@ -1,7 +1,7 @@
 ---
 title: "EDS 223 Homework 2"
 author: Ava Robillard
-date: October 17, 2025
+date: October 18, 2025
 format: html
 execute:
   message: false
@@ -10,7 +10,7 @@ execute:
 
 ## Exploring patterns of environmental justice in Los Angeles, California
 
-During the 1930's, the Home Owner's Loan Corporation (HOLC) rated neighborhoods based upon their perceived safety ratings, eventually used blocking for access to loans for home ownership. Known as redlining, this practice has had persistent effects in the present-day, from the health of the surrounding environment to community involvement in citizen science. This makes mapping this data important for making informed decisions about conservation efforts and ensuring that all people have equitable access to a safe and biodiverse environment.
+During the 1930's, the Home Owner's Loan Corporation (HOLC) rated neighborhoods based upon their perceived safety ratings, which was then used for blocking access to loans for home ownership. Known as redlining, this practice has had persistent effects in the present-day, from the health of the surrounding environment to community involvement in citizen science. This makes mapping this data important for making informed decisions about conservation efforts and ensuring that all people have equitable access to a safe and biodiverse environment.
 
 **Objective**: Use EJScreen, HOLC designations, and bird observation data to visualize the effects of redlining on present-day Los Angeles, California as studied in [Ellis-Soto et al. 2023](https://ecoevorxiv.org/repository/view/3736/).
 
@@ -24,7 +24,7 @@ library(patchwork)
 ```
 
 ### Import data
-Import the EJScreen, HOLC designation, and bird observation data, filter to Los Angeles, and ensure they have the same coordinate reference system
+Import the EJScreen, HOLC designation, and bird observation data
 ```{r}
 # Read in data
 ejscreen <- read_sf(here::here("data", "ejscreen", "EJSCREEN_2023_BG_StatePct_with_AS_CNMI_GU_VI.gdb")) 
@@ -130,7 +130,13 @@ env_plot
 ```
 
 ### Interpretation of results
-** paragraph summarizing results **
+
+Across all four bar graphs displaying the mean values of EJScreen variables, there is a clear trend of census block groups that received a HOLC grade designation of D having higher values for socioeconomic and environmental indicators than those that received a grade of A.
+
+The EJScreen socioeconomic indicator data were sourced from the U.S. Census Bureau's American Community Survey (ACS) 2017-2021 5-Year-Estimates, while the environmental indicator data were gathered from a variety of sources spanning 2017 to 2023. The HOLC grades were established in the 1930s, so being able to visualize clear trends in environmental hazards and community susceptibility almost 100 years later shows the persistence of the effects of redlining. 
+
+Based on where these grades were located in the map of Los Angeles neighborhoods, areas rated C and D appear to have remained more urban and therefore close to sources of environmental hazards such as waste or PM 2.5 over time. This may be due to the historical blocking of loans and investments for buying homes in these areas, preventing long-term ownership and care. Overall, the bar graphs reflect these disparities and show that redlining has contributed to long-term environmental justice issues in Los Angeles.
+
 
 ## Part 2: Legacy of redlining in biodiversity observations
 Explore historical redlining in Los Angeles in the collection of bird observations
@@ -140,7 +146,8 @@ Explore historical redlining in Los Angeles in the collection of bird observatio
 1. Spatially join bird observation data to HOLC grade data to assign each bird observation to a corresponding HOLC grade
 ```{r}
 # Spatially join bird observation and HOLC data
-bird_grades <- st_join(holc, bird_obs) 
+bird_grades <- st_join(holc, bird_obs) %>% 
+  st_drop_geometry()
 ```
 
 2. Create a visualization of the percentage of bird observations within each HOLC grade
@@ -162,4 +169,15 @@ bird_plot
 ```
 
 ### Interpretation of results
-** paragraph about differences in study design and results **
+
+There is the largest proportion of bird observations in neighborhoods that were previously grade C areas, with grade A and B having the second largest proportions of observations.
+
+These results did not match the findings from [Ellis-Soto et al. 2023](https://ecoevorxiv.org/repository/view/3736/), which is likely due to differences in sampling and study design. They covered 38 states and 195 metropolitan areas, creating a larger sample that is likely better at estimating the true differences between grades. They also took into account differences in vegetation, open space, and population density and included them as predictors in their model, which would reduce the confounding effects of these variables on the results. For instance, areas that were grade C could have the highest population density in Los Angeles, which would skew the results even if there was not a high sampling density in these areas.
+
+## Data Citations 
+---
+[EJScreen](https://pedp-ejscreen.azurewebsites.net/). Accessed Oct 11, 2025
+
+[Digital Scholarship Lab, Mapping Inequality project: HOLC redlining data](https://dsl.richmond.edu/panorama/redlining/data). Accessed Oct 11, 2025
+
+[Global Biodiversity Information Facility: bird observation data](https://www.gbif.org/). Accessed Oct 11, 2025
