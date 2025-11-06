@@ -15,9 +15,9 @@ The **HW2.qmd** file contains the main analysis and visualizations.
 The **data** folder contains the ejscreen, HOLC redlining, and biodiversity observation data imported for the analysis.
 
 ``` bash
-EDS223-HW2
+los-angeles-redlining
 │   README.md
-│   HW2.qmd
+│   la-redlining.qmd
 │   Rmd/Proj files    
 │
 └───.gitignore
